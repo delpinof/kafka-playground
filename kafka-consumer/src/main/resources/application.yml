@@ -1,0 +1,4 @@
+kafka:
+  bootstrap-server: localhost:9092
+  topic-name: string-topic
+  group-id: kafka-string-consumer-group
