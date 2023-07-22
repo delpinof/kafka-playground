@@ -1,4 +1,4 @@
-package com.fherdelpino.playground.consumer.service;
+package com.fherdelpino.kafka.playground.consumer.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;

@@ -1,4 +1,4 @@
-package com.fherdelpino.playground.consumer.configuration;
+package com.fherdelpino.kafka.playground.consumer.configuration;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
