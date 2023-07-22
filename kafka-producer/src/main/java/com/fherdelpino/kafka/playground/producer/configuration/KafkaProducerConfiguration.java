@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 @Configuration
-public class KafkaConfiguration {
+public class KafkaProducerConfiguration {
 
     @Value("${kafka.bootstrap-server}")
     private String bootstrapServer;

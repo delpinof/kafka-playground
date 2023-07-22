@@ -1,4 +1,6 @@
 kafka:
   bootstrap-server: localhost:9092
-  topic-name: string-topic
   group-id: kafka-string-consumer-group
+  string-topic-name: string-topic
+  student-avro-topic-name: student-avro-topic
+  schema-registry: http://localhost:8081
