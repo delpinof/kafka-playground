@@ -1,0 +1,6 @@
+kafka:
+  bootstrap-servers: localhost:9092
+  input-topic: string-topic
+  output-topic: string-topic-streamed
+  schema-registry: http://localhost:8081
+  application-id: basic-streams

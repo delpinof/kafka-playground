@@ -1,5 +1,5 @@
 kafka:
-  bootstrap-server: localhost:9092
+  bootstrap-servers: localhost:9092
   group-id: kafka-string-consumer-group
   string-topic-name: string-topic
   student-avro-topic-name: student-avro-topic

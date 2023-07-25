@@ -3,3 +3,5 @@ rootProject.name = 'kafka-playground'
 include 'kafka-consumer'
 include 'kafka-producer'
 include 'kafka-common'
+include 'kafka-streams'
+
