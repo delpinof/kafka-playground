@@ -27,7 +27,7 @@ public class KafkaPlaygroundAvroConsumer implements KafkaPlaygroundConsumer {
         kafkaStudentAvroConsumer.subscribe(Collections.singletonList(studentAvroTopicName));
         while(true) {
             kafkaStudentAvroConsumer.poll(Duration.ofMillis(100))
-                    .forEach(record -> log.info("{}", record.value()));
+                    .forEach(record -> log.info("{} - {}", record.key(), record.value()));
         }
     }
 }

@@ -29,7 +29,7 @@ public class KafkaPlaygroundAvroProducer implements InfiniteProducer {
                     .setStudentName("Fernando")
                     .build();
             kafkaAvroProducer.send(new ProducerRecord<>(studentAvroTopicName, student));
-            log.info("Message sent successfully!");
+            log.info("{} sent successfully!", student);
             Thread.sleep(1000);
         }
     }
