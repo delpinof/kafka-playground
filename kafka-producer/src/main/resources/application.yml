@@ -5,4 +5,4 @@ kafka:
   schema-registry: http://localhost:8081
 
 playground:
-  producer-type: string
+  producer-type: avro
