@@ -3,3 +3,6 @@ kafka:
   string-topic-name: string-topic
   student-avro-topic-name: student-avro-topic
   schema-registry: http://localhost:8081
+
+playground:
+  producer-type: string
