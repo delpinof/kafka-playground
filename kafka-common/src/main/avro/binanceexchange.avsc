@@ -1,0 +1,15 @@
+{
+  "namespace": "com.fherdelpino.kafka.playground.common.avro.model",
+  "type": "record",
+  "name": "BinanceExchange",
+  "fields": [
+    {
+      "name": "timestamp",
+      "type": "long"
+    },
+    {
+      "name": "price",
+      "type": "string"
+    }
+  ]
+}
