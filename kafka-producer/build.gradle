@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation project(':kafka-common')
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.apache.kafka:kafka-clients'
     implementation 'io.confluent:kafka-avro-serializer:7.4.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -32,10 +32,6 @@ test {
     useJUnitPlatform()
 }
 
-bootJar {
-    enabled = false
-}
-
 jar {
-    enabled = true
+    enabled = false
 }
