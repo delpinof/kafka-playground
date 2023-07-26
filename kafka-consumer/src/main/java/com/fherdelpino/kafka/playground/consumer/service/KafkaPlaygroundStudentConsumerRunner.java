@@ -1,7 +1,7 @@
 package com.fherdelpino.kafka.playground.consumer.service;
 
-import com.fherdelpino.kafka.playground.common.avro.model.Student;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,13 +21,13 @@ public class KafkaPlaygroundStudentConsumerRunner implements CommandLineRunner {
     private String topic;
 
     @Autowired
-    private Consumer<String, Student> kafkaStudentAvroConsumer;
+    private Consumer<String, SpecificRecord> kafkaSpecificAvroConsumer;
 
     @Override
     public void run(String... args) {
-        kafkaStudentAvroConsumer.subscribe(Collections.singletonList(topic));
+        kafkaSpecificAvroConsumer.subscribe(Collections.singletonList(topic));
         while(true) {
-            kafkaStudentAvroConsumer.poll(Duration.ofMillis(100))
+            kafkaSpecificAvroConsumer.poll(Duration.ofMillis(100))
                     .forEach(record -> log.info("{} - {}", record.key(), record.value()));
         }
     }

@@ -2,6 +2,7 @@ package com.fherdelpino.kafka.playground.consumer.service;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,14 +24,14 @@ public class BinanceExchangeKafkaConsumerRunner implements CommandLineRunner {
     private String topic;
 
     @Autowired
-    public Consumer<String, BinanceExchange> kafkaBinanceExchangeConsumer;
+    public Consumer<String, SpecificRecord> kafkaSpecificAvroConsumer;
 
     @Override
     public void run(String... args) {
-        kafkaBinanceExchangeConsumer.subscribe(Collections.singletonList(topic));
+        kafkaSpecificAvroConsumer.subscribe(Collections.singletonList(topic));
         while (true) {
-            kafkaBinanceExchangeConsumer.poll(Duration.ofMillis(100))
-                    .forEach(record -> log.info("{} - {}", record.key(), convert(record.value())));
+            kafkaSpecificAvroConsumer.poll(Duration.ofMillis(100))
+                    .forEach(record -> log.info("{} - {}", record.key(), convert((BinanceExchange)record.value())));
         }
     }
 

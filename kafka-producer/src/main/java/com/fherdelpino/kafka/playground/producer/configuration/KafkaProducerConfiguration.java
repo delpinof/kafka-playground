@@ -31,7 +31,7 @@ public class KafkaProducerConfiguration {
     }
 
     @Bean
-    public Producer<String, SpecificRecord> kafkaAvroProducer() {
+    public Producer<String, SpecificRecord> kafkaSpecificAvroProducer() {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);

@@ -28,7 +28,7 @@ public class BinanceExchangeKafkaProducerRunner implements CommandLineRunner {
     private String topic;
 
     @Autowired
-    private Producer<String, SpecificRecord> kafkaAvroProducer;
+    private Producer<String, SpecificRecord> kafkaSpecificAvroProducer;
 
     @Override
     public void run(String... args) {
@@ -47,7 +47,7 @@ public class BinanceExchangeKafkaProducerRunner implements CommandLineRunner {
                 .setPrice(event.getPrice())
                 .setTimestamp(event.getEventTime())
                 .build();
-        kafkaAvroProducer.send(new ProducerRecord<>(topic, key, value));
+        kafkaSpecificAvroProducer.send(new ProducerRecord<>(topic, key, value));
         log.info("Ticker {} price {}", event.getSymbol(), event.getPrice());
     }
 }

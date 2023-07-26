@@ -20,7 +20,7 @@ public class KafkaPlaygroundStudentProducerRunner implements CommandLineRunner {
     private String topic;
 
     @Autowired
-    private Producer<String, SpecificRecord> kafkaAvroProducer;
+    private Producer<String, SpecificRecord> kafkaSpecificAvroProducer;
 
     @Override
     public void run(String... args) throws Exception {
@@ -30,7 +30,7 @@ public class KafkaPlaygroundStudentProducerRunner implements CommandLineRunner {
                     .setAge(18)
                     .setStudentName("Fernando")
                     .build();
-            kafkaAvroProducer.send(new ProducerRecord<>(topic, student));
+            kafkaSpecificAvroProducer.send(new ProducerRecord<>(topic, student));
             log.info("{} sent successfully!", student);
             Thread.sleep(1000);
         }
