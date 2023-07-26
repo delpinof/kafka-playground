@@ -4,3 +4,6 @@ kafka:
   output-topic: student-avro-topic-streamed
   schema-registry: http://localhost:8081
   application-id: student-streams
+
+playground:
+  stream-type: avro
