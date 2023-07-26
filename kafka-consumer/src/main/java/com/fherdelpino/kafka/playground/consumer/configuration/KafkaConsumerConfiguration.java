@@ -15,8 +15,8 @@ import java.util.Properties;
 @Configuration
 public class KafkaConsumerConfiguration {
 
-    @Value("${kafka.bootstrap-server}")
-    private String bootstrapServer;
+    @Value("${kafka.bootstrap-servers}")
+    private String bootstrapServers;
 
     @Value("${kafka.schema-registry}")
     private String schemaRegistry;
@@ -27,7 +27,7 @@ public class KafkaConsumerConfiguration {
     @Bean
     public Consumer<String, String> kafkaStringConsumer() {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -38,7 +38,7 @@ public class KafkaConsumerConfiguration {
     @Bean
     public Consumer<String, Student> kafkaAvroStudentConsumer() {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);

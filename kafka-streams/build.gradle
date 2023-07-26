@@ -19,10 +19,10 @@ repositories {
 }
 
 dependencies {
-    implementation project(':kafka-common')
+    implementation project(":kafka-common")
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.apache.kafka:kafka-clients'
-    implementation 'io.confluent:kafka-avro-serializer:7.4.0'
+    implementation 'org.apache.kafka:kafka-streams'
+    implementation 'io.confluent:kafka-streams-avro-serde:7.4.1'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
