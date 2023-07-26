@@ -1,8 +1,11 @@
 kafka:
   bootstrap-servers: localhost:9092
-  string-topic-name: string-topic
-  student-avro-topic-name: student-avro-topic
+  topic: binance-exchange-input
   schema-registry: http://localhost:8081
 
 playground:
-  producer-type: avro
+  producer-type: exchange
+
+binance:
+  exchange:
+    tickers: BTCUSDT, ETHUSDT, XRPUSDT
