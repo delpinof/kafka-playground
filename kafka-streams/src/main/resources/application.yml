@@ -1,9 +1,9 @@
 kafka:
   bootstrap-servers: localhost:9092
-  input-topic: student-avro-topic
-  output-topic: student-avro-topic-streamed
+  input-topic: binance-exchange-input
+  output-topic: binance-exchange-btc
   schema-registry: http://localhost:8081
   application-id: student-streams
 
 playground:
-  stream-type: avro
+  stream-type: exchange

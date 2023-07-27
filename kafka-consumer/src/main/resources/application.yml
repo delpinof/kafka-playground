@@ -1,7 +1,7 @@
 kafka:
   bootstrap-servers: localhost:9092
   group-id: kafka-string-consumer-group
-  topic: binance-exchange-input
+  topic: binance-exchange-btc
   schema-registry: http://localhost:8081
 
 playground:
