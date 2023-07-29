@@ -3,7 +3,7 @@ kafka:
   input-topic: binance-exchange-input
   output-topic: binance-exchange-btc
   schema-registry: http://localhost:8081
-  application-id: student-streams
+  application-id: binance-exchange-streams
 
 playground:
-  stream-type: exchange
+  stream-type: exchange-ktable
