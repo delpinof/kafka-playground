@@ -1,5 +1,6 @@
 package com.fherdelpino.kafka.playground.consumer.service;
 
+import com.fherdelpino.kafka.playground.common.avro.model.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -28,7 +29,7 @@ public class KafkaPlaygroundStudentConsumerRunner implements CommandLineRunner {
         kafkaSpecificAvroConsumer.subscribe(Collections.singletonList(topic));
         while(true) {
             kafkaSpecificAvroConsumer.poll(Duration.ofMillis(100))
-                    .forEach(record -> log.info("{} - {}", record.key(), record.value()));
+                    .forEach(record -> log.info("{} - {}", record.key(), (Student)record.value()));
         }
     }
 }
