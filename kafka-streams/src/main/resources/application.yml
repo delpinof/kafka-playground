@@ -6,4 +6,4 @@ kafka:
   application-id: binance-exchange-streams
 
 playground:
-  stream-type: exchange-windowed
+  stream-type: exchange
