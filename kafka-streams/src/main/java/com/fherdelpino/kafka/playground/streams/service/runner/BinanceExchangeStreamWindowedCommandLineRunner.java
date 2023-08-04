@@ -1,4 +1,4 @@
-package com.fherdelpino.kafka.playground.streams.service;
+package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;

@@ -1,9 +1,9 @@
-package com.fherdelpino.kafka.playground.streams.service;
+package com.fherdelpino.kafka.playground.streams.service.runner;
 
-import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import com.fherdelpino.kafka.playground.common.avro.model.Student;
+import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -17,8 +17,8 @@ import java.util.Properties;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange")
-public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunner {
+@ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "avro")
+public class KafkaPlaygroundAvroStreamsCommandLineRunner implements CommandLineRunner {
 
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -40,18 +40,17 @@ public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunne
         Properties streamsProps = new Properties();
         streamsProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         streamsProps.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-        streamsProps.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
+        streamsProps.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, GenericAvroSerde.class);
         streamsProps.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         streamsProps.put("schema.registry.url", schemaRegistry);
-
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, BinanceExchange> stream = builder.stream(inputTopic);
-        stream.filter((key, value) -> key.equals("BTCUSDT"))
+
+        KStream<String, Student> stream = builder.stream(inputTopic);
+        stream.mapValues(student -> Student.newBuilder(student).setStudentName("Alonso").build())
                 //.peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic);
 
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamsProps);
         kafkaStreams.start();
     }
-
 }
