@@ -47,9 +47,6 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
         Properties streamsProps = new Properties();
         streamsProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         streamsProps.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-        streamsProps.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
-        streamsProps.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
-        streamsProps.put("schema.registry.url", schemaRegistry);
 
         final Serde<BinanceExchange> valueSpecificAvroSerde = new SpecificAvroSerde<>();
         final Map<String, String> serdeConfig = Collections.singletonMap("schema.registry.url", schemaRegistry);
