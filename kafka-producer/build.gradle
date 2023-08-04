@@ -17,7 +17,7 @@ repositories {
         url "https://packages.confluent.io/maven"
     }
     maven {
-        url "https://jitpack.io"
+        url "https://jitpack.io" // for binance-java-api
     }
 }
 
