@@ -22,7 +22,7 @@ import java.util.Properties;
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-processor")
 public class BinanceExchangeProcessorCommandLineRunner implements CommandLineRunner {
 
-    final static String storeName = "binance-exchange-countbyticker-store";
+    private final static String storeName = "binance-exchange-countbyticker-store";
 
     @Autowired
     public Properties streamProperties;
