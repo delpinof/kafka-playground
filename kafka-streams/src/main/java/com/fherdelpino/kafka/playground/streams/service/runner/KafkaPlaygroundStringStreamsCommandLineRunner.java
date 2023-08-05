@@ -32,14 +32,12 @@ public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLin
 
     @Override
     public void run(String... args) {
-
         StreamsBuilder builder = new StreamsBuilder();
 
         createBuilder(builder);
 
-        try (KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties)) {
-            kafkaStreams.start();
-        }
+        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        kafkaStreams.start();
 
     }
 
