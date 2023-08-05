@@ -17,8 +17,8 @@ import java.util.Properties;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "avro")
-public class KafkaPlaygroundAvroStreamsCommandLineRunner implements CommandLineRunner {
+@ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "student")
+public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements CommandLineRunner {
 
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
