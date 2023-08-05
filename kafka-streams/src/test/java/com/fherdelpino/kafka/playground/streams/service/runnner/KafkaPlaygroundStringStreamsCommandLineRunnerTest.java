@@ -9,12 +9,15 @@ import org.apache.kafka.streams.TestOutputTopic;
 import org.apache.kafka.streams.TopologyTestDriver;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class KafkaPlaygroundStringStreamsCommandLineRunnerTest {
 
@@ -34,8 +37,7 @@ public class KafkaPlaygroundStringStreamsCommandLineRunnerTest {
         streamProps.put("schema.registry.url", SCHEMA_REGISTRY);
 
         StreamsBuilder builder = new StreamsBuilder();
-        KafkaPlaygroundStringStreamsCommandLineRunner sut = new KafkaPlaygroundStringStreamsCommandLineRunner(
-                streamProps, INPUT_TOPIC_NAME, OUTPUT_TOPIC_NAME);
+        KafkaPlaygroundStringStreamsCommandLineRunner sut = new KafkaPlaygroundStringStreamsCommandLineRunner(streamProps, INPUT_TOPIC_NAME, OUTPUT_TOPIC_NAME);
         sut.createBuilder(builder);
 
         testDriver = new TopologyTestDriver(builder.build(), streamProps);
@@ -43,14 +45,18 @@ public class KafkaPlaygroundStringStreamsCommandLineRunnerTest {
         outputTopic = testDriver.createOutputTopic(OUTPUT_TOPIC_NAME, Serdes.String().deserializer(), Serdes.String().deserializer());
     }
 
-    @Test
-    public void test() {
-        List<String> expectedValues = List.of("1 is streamed", "2 is streamed", "3 is streamed");
-        for (int i = 1; i <= 3; i++) {
-            inputTopic.pipeInput(String.valueOf(i), String.valueOf(i));
+    @ParameterizedTest
+    @MethodSource("streamData")
+    public void test(List<String> inputData, List<String> expectedValues) {
+        for (String record : inputData) {
+            inputTopic.pipeInput(record);
         }
         List<String> actualValues = outputTopic.readValuesToList();
-        assertEquals(expectedValues, actualValues);
+        assertThat(actualValues).isEqualTo(expectedValues);
+    }
+
+    private static Stream<Arguments> streamData() {
+        return Stream.of(Arguments.of(List.of("1", "2", "3"), List.of("1 is streamed", "2 is streamed", "3 is streamed")));
     }
 
     @AfterAll
