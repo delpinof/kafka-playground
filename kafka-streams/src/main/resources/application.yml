@@ -2,6 +2,7 @@ kafka:
   bootstrap-servers: localhost:9092
   input-topic: binance-exchange-input
   output-topic: binance-exchange-btc
+  group-by-topic: exchange-groupby-ticker-count
   schema-registry: http://localhost:8081
   application-id: binance-exchange-streams
 

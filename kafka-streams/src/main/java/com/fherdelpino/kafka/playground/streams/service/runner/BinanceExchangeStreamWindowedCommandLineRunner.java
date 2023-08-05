@@ -7,7 +7,6 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.processor.TimestampExtractor;
@@ -28,23 +27,17 @@ import static org.apache.kafka.streams.kstream.Suppressed.untilWindowCloses;
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-windowed")
 public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner {
 
-    @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    @Autowired
+    private Properties streamProperties;
 
     @Value("${kafka.input-topic}")
     private String inputTopic;
-
-    @Value("${kafka.application-id}")
-    private String applicationId;
 
     @Autowired
     private Serde<BinanceExchange> binanceExchangeValueSerde;
 
     @Override
     public void run(String... args) {
-        Properties streamsProps = new Properties();
-        streamsProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        streamsProps.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
 
         Duration windowSize = Duration.ofMinutes(5);
         TimeWindows tumblingWindow = TimeWindows.ofSizeWithNoGrace(windowSize);
@@ -61,7 +54,7 @@ public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLi
                 //.map((wk, v) -> KeyValue.pair(wk.key(), v))
                 .peek((k, v) -> log.info("Output: {} - {}", k, v));
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamsProps);
+        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
         kafkaStreams.start();
     }
 
