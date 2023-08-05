@@ -56,7 +56,9 @@ public class KafkaPlaygroundStringStreamsCommandLineRunnerTest {
     }
 
     private static Stream<Arguments> streamData() {
-        return Stream.of(Arguments.of(List.of("1", "2", "3"), List.of("1 is streamed", "2 is streamed", "3 is streamed")));
+        return Stream.of(
+                Arguments.of(List.of("1", "2", "3"), List.of("1 is streamed", "2 is streamed", "3 is streamed"))
+        );
     }
 
     @AfterAll
