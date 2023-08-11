@@ -1,6 +1,7 @@
 package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -20,18 +21,19 @@ import org.springframework.stereotype.Component;
 import java.util.Properties;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-ktable")
 public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner {
 
     @Autowired
-    private Properties streamProperties;
+    private final Properties streamProperties;
 
     @Value("${kafka.input-topic}")
-    private String inputTopic;
+    private final String inputTopic;
 
     @Value("${kafka.output-topic}")
-    private String outputTopic;
+    private final String outputTopic;
 
     @Autowired
     private Serde<BinanceExchange> binanceExchangeValueSerde;
@@ -39,6 +41,13 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
     @Override
     public void run(String... args) {
 
+        StreamsBuilder builder = createBuilder();
+
+        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        kafkaStreams.start();
+    }
+
+    public StreamsBuilder createBuilder() {
         StreamsBuilder builder = new StreamsBuilder();
         KTable<String, BinanceExchange> binanceExchangeKTable = builder.table(inputTopic,
                 Materialized.<String, BinanceExchange, KeyValueStore<Bytes, byte[]>>as("ktable-btc-exchange-store")
@@ -49,9 +58,7 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
                 .toStream()
                 .peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic, Produced.with(Serdes.String(), binanceExchangeValueSerde));
-
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
-        kafkaStreams.start();
+        return builder;
     }
 
 }
