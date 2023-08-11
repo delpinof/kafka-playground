@@ -36,9 +36,8 @@ public class KafkaPlaygroundStringStreamsCommandLineRunnerTest {
         streamProps.put(StreamsConfig.APPLICATION_ID_CONFIG, "string-test-app");
         streamProps.put("schema.registry.url", SCHEMA_REGISTRY);
 
-        StreamsBuilder builder = new StreamsBuilder();
         KafkaPlaygroundStringStreamsCommandLineRunner sut = new KafkaPlaygroundStringStreamsCommandLineRunner(streamProps, INPUT_TOPIC_NAME, OUTPUT_TOPIC_NAME);
-        sut.createBuilder(builder);
+        StreamsBuilder builder = sut.createBuilder();
 
         testDriver = new TopologyTestDriver(builder.build(), streamProps);
         inputTopic = testDriver.createInputTopic(INPUT_TOPIC_NAME, Serdes.String().serializer(), Serdes.String().serializer());

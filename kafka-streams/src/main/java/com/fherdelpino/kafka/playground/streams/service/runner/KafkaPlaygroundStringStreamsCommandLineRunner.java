@@ -19,7 +19,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "string")
-public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLineRunner {
+public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -32,19 +32,20 @@ public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLin
 
     @Override
     public void run(String... args) {
-        StreamsBuilder builder = new StreamsBuilder();
-
-        createBuilder(builder);
+        StreamsBuilder builder = createBuilder();
 
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
         kafkaStreams.start();
 
     }
 
-    public void createBuilder(StreamsBuilder builder) {
+    @Override
+    public StreamsBuilder createBuilder() {
+        StreamsBuilder builder = new StreamsBuilder();
         builder.stream(inputTopic, Consumed.with(Serdes.String(), Serdes.String()))
                 .mapValues(value -> value + " is streamed")
                 //.peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic, Produced.with(Serdes.String(), Serdes.String()));
+        return builder;
     }
 }
