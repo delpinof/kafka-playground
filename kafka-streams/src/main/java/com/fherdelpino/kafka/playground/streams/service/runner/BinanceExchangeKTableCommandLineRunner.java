@@ -24,7 +24,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-ktable")
-public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner {
+public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -47,6 +47,7 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
         kafkaStreams.start();
     }
 
+    @Override
     public StreamsBuilder createBuilder() {
         StreamsBuilder builder = new StreamsBuilder();
         KTable<String, BinanceExchange> binanceExchangeKTable = builder.table(inputTopic,

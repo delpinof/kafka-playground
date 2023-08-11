@@ -21,7 +21,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange")
-public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunner {
+public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -44,6 +44,7 @@ public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunne
         kafkaStreams.start();
     }
 
+    @Override
     public StreamsBuilder createBuilder() {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, BinanceExchange> stream = builder.stream(inputTopic);

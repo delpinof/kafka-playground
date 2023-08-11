@@ -1,6 +1,7 @@
 package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Serde;
@@ -23,23 +24,35 @@ import static org.apache.kafka.streams.kstream.Suppressed.BufferConfig.unbounded
 import static org.apache.kafka.streams.kstream.Suppressed.untilWindowCloses;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-windowed")
-public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner {
+public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
 
     @Autowired
-    private Properties streamProperties;
+    private final Properties streamProperties;
 
     @Value("${kafka.input-topic}")
-    private String inputTopic;
+    private final String inputTopic;
 
     @Autowired
-    private Serde<BinanceExchange> binanceExchangeValueSerde;
+    private final Serde<BinanceExchange> binanceExchangeValueSerde;
+
+    private static final int WINDOW_MINUTES_DURATION = 5;
 
     @Override
     public void run(String... args) {
 
-        Duration windowSize = Duration.ofMinutes(5);
+        StreamsBuilder builder = createBuilder();
+
+        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        kafkaStreams.start();
+    }
+
+    @Override
+    public StreamsBuilder createBuilder() {
+
+        Duration windowSize = Duration.ofMinutes(WINDOW_MINUTES_DURATION);
         TimeWindows tumblingWindow = TimeWindows.ofSizeWithNoGrace(windowSize);
 
         StreamsBuilder builder = new StreamsBuilder();
@@ -54,8 +67,7 @@ public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLi
                 //.map((wk, v) -> KeyValue.pair(wk.key(), v))
                 .peek((k, v) -> log.info("Output: {} - {}", k, v));
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
-        kafkaStreams.start();
+        return builder;
     }
 
     /**
