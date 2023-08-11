@@ -24,6 +24,9 @@ import java.util.Properties;
 import static org.apache.kafka.streams.kstream.Suppressed.BufferConfig.unbounded;
 import static org.apache.kafka.streams.kstream.Suppressed.untilWindowCloses;
 
+/**
+ * Count the amount of exchanges in a timeframe.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
