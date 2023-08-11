@@ -1,6 +1,7 @@
 package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import com.fherdelpino.kafka.playground.streams.error.BinanceExchangeUncaughtExceptionHandler;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunne
         StreamsBuilder builder = createBuilder();
 
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        kafkaStreams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
         kafkaStreams.start();
     }
 

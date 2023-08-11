@@ -1,6 +1,7 @@
 package com.fherdelpino.kafka.playground.streams.configuration;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import com.fherdelpino.kafka.playground.streams.error.BinanceExchangeDeserializationExceptionHandler;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.StreamsConfig;
@@ -30,6 +31,8 @@ public class KafkaStreamsConfiguration {
         streamProperties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         streamProperties.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
         streamProperties.put("schema.registry.url", schemaRegistry);
+        streamProperties.put(StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, BinanceExchangeDeserializationExceptionHandler.class);
+
         return streamProperties;
     }
 

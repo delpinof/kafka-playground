@@ -1,6 +1,7 @@
 package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import com.fherdelpino.kafka.playground.streams.error.BinanceExchangeUncaughtExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
@@ -44,6 +45,7 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
         StreamsBuilder builder = createBuilder();
 
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        kafkaStreams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
         kafkaStreams.start();
     }
 
