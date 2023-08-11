@@ -43,9 +43,8 @@ public class KafkaPlaygroundStudentAvroStreamsCommandLineRunnerTest {
         streamProps.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         streamProps.put("schema.registry.url", SCHEMA_REGISTRY);
 
-        StreamsBuilder builder = new StreamsBuilder();
         KafkaPlaygroundStudentAvroStreamsCommandLineRunner sut = new KafkaPlaygroundStudentAvroStreamsCommandLineRunner(new Properties(), INPUT_TOPIC_NAME, OUTPUT_TOPIC_NAME);
-        sut.createBuilder(builder);
+        StreamsBuilder builder = sut.createBuilder();
 
         SpecificAvroSerializer<Student> studentSerializer = new SpecificAvroSerializer<>();
         studentSerializer.configure(Map.of("schema.registry.url", SCHEMA_REGISTRY), false);

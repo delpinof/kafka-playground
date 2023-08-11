@@ -21,7 +21,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "student")
-public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements CommandLineRunner {
+public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -38,17 +38,19 @@ public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements Comma
         streamProperties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, GenericAvroSerde.class);
         streamProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
 
-        StreamsBuilder builder = new StreamsBuilder();
-        createBuilder(builder);
+        StreamsBuilder builder = createBuilder();
 
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
         kafkaStreams.start();
     }
 
-    public void createBuilder(StreamsBuilder builder) {
+    @Override
+    public StreamsBuilder createBuilder() {
+        StreamsBuilder builder = new StreamsBuilder();
         KStream<String, Student> stream = builder.stream(inputTopic);
         stream.mapValues(student -> Student.newBuilder(student).setStudentName("Alonso").build())
                 //.peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic);
+        return builder;
     }
 }
