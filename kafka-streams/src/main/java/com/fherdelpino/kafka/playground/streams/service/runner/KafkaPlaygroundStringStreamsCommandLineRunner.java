@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.Produced;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "string")
-public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
+public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -32,20 +33,20 @@ public class KafkaPlaygroundStringStreamsCommandLineRunner implements CommandLin
 
     @Override
     public void run(String... args) {
-        StreamsBuilder builder = createBuilder();
+        Topology topology = createTopology();
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        KafkaStreams kafkaStreams = new KafkaStreams(topology, streamProperties);
         kafkaStreams.start();
 
     }
 
     @Override
-    public StreamsBuilder createBuilder() {
+    public Topology createTopology() {
         StreamsBuilder builder = new StreamsBuilder();
         builder.stream(inputTopic, Consumed.with(Serdes.String(), Serdes.String()))
                 .mapValues(value -> value + " is streamed")
                 //.peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic, Produced.with(Serdes.String(), Serdes.String()));
-        return builder;
+        return builder.build();
     }
 }

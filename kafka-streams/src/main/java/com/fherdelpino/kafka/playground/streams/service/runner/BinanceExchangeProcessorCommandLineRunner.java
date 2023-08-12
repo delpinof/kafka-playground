@@ -22,7 +22,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-processor")
-public class BinanceExchangeProcessorCommandLineRunner implements CommandLineRunner {
+public class BinanceExchangeProcessorCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     private final static String storeName = "binance-exchange-countbyticker-store";
 
@@ -46,6 +46,7 @@ public class BinanceExchangeProcessorCommandLineRunner implements CommandLineRun
         streams.start();
     }
 
+    @Override
     public Topology createTopology() {
         String sourceNode = "exchange-source";
         String processorNode = "exchange-count";

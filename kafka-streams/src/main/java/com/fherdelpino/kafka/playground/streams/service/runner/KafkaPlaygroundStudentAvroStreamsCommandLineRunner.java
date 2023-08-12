@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "student")
-public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
+public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -38,19 +39,19 @@ public class KafkaPlaygroundStudentAvroStreamsCommandLineRunner implements Comma
         streamProperties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, GenericAvroSerde.class);
         streamProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
 
-        StreamsBuilder builder = createBuilder();
+        Topology topology = createTopology();
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        KafkaStreams kafkaStreams = new KafkaStreams(topology, streamProperties);
         kafkaStreams.start();
     }
 
     @Override
-    public StreamsBuilder createBuilder() {
+    public Topology createTopology() {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, Student> stream = builder.stream(inputTopic);
         stream.mapValues(student -> Student.newBuilder(student).setStudentName("Alonso").build())
                 //.peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic);
-        return builder;
+        return builder.build();
     }
 }

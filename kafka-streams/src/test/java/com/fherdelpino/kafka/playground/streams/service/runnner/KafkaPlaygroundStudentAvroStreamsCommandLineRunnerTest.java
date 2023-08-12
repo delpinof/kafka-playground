@@ -6,10 +6,10 @@ import io.confluent.kafka.streams.serdes.avro.SpecificAvroDeserializer;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.TestOutputTopic;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyTestDriver;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +44,7 @@ public class KafkaPlaygroundStudentAvroStreamsCommandLineRunnerTest {
         streamProps.put("schema.registry.url", SCHEMA_REGISTRY);
 
         KafkaPlaygroundStudentAvroStreamsCommandLineRunner sut = new KafkaPlaygroundStudentAvroStreamsCommandLineRunner(new Properties(), INPUT_TOPIC_NAME, OUTPUT_TOPIC_NAME);
-        StreamsBuilder builder = sut.createBuilder();
+        Topology topology = sut.createTopology();
 
         SpecificAvroSerializer<Student> studentSerializer = new SpecificAvroSerializer<>();
         studentSerializer.configure(Map.of("schema.registry.url", SCHEMA_REGISTRY), false);
@@ -52,7 +52,7 @@ public class KafkaPlaygroundStudentAvroStreamsCommandLineRunnerTest {
         SpecificAvroDeserializer<Student> studentDeserializer = new SpecificAvroDeserializer<>();
         studentDeserializer.configure(Map.of("schema.registry.url", SCHEMA_REGISTRY), false);
 
-        testDriver = new TopologyTestDriver(builder.build(), streamProps);
+        testDriver = new TopologyTestDriver(topology, streamProps);
         inputTopic = testDriver.createInputTopic(INPUT_TOPIC_NAME, Serdes.String().serializer(), studentSerializer);
         outputTopic = testDriver.createOutputTopic(OUTPUT_TOPIC_NAME, Serdes.String().deserializer(), studentDeserializer);
     }

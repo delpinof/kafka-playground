@@ -2,10 +2,10 @@ package com.fherdelpino.kafka.playground.streams.service.runnner;
 
 import com.fherdelpino.kafka.playground.streams.service.runner.KafkaPlaygroundStringStreamsCommandLineRunner;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.TestOutputTopic;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyTestDriver;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,9 +37,9 @@ public class KafkaPlaygroundStringStreamsCommandLineRunnerTest {
         streamProps.put("schema.registry.url", SCHEMA_REGISTRY);
 
         KafkaPlaygroundStringStreamsCommandLineRunner sut = new KafkaPlaygroundStringStreamsCommandLineRunner(streamProps, INPUT_TOPIC_NAME, OUTPUT_TOPIC_NAME);
-        StreamsBuilder builder = sut.createBuilder();
+        Topology topology = sut.createTopology();
 
-        testDriver = new TopologyTestDriver(builder.build(), streamProps);
+        testDriver = new TopologyTestDriver(topology, streamProps);
         inputTopic = testDriver.createInputTopic(INPUT_TOPIC_NAME, Serdes.String().serializer(), Serdes.String().serializer());
         outputTopic = testDriver.createOutputTopic(OUTPUT_TOPIC_NAME, Serdes.String().deserializer(), Serdes.String().deserializer());
     }

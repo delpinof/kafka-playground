@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
@@ -25,7 +26,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-ktable")
-public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
+public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -42,15 +43,15 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
     @Override
     public void run(String... args) {
 
-        StreamsBuilder builder = createBuilder();
+        Topology topology = createTopology();
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        KafkaStreams kafkaStreams = new KafkaStreams(topology, streamProperties);
         kafkaStreams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
         kafkaStreams.start();
     }
 
     @Override
-    public StreamsBuilder createBuilder() {
+    public Topology createTopology() {
         StreamsBuilder builder = new StreamsBuilder();
         KTable<String, BinanceExchange> binanceExchangeKTable = builder.table(inputTopic,
                 Materialized.<String, BinanceExchange, KeyValueStore<Bytes, byte[]>>as("ktable-btc-exchange-store")
@@ -61,7 +62,7 @@ public class BinanceExchangeKTableCommandLineRunner implements CommandLineRunner
                 .toStream()
                 .peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic, Produced.with(Serdes.String(), binanceExchangeValueSerde));
-        return builder;
+        return builder.build();
     }
 
 }

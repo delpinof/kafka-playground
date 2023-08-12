@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange")
-public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
+public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -39,20 +40,20 @@ public class BinanceExchangeStreamsCommandLineRunner implements CommandLineRunne
         streamProperties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
         streamProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
 
-        StreamsBuilder builder = createBuilder();
+        Topology topology = createTopology();
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        KafkaStreams kafkaStreams = new KafkaStreams(topology, streamProperties);
         kafkaStreams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
         kafkaStreams.start();
     }
 
     @Override
-    public StreamsBuilder createBuilder() {
+    public Topology createTopology() {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, BinanceExchange> stream = builder.stream(inputTopic);
         stream.filter((key, value) -> key.equals("BTCUSDT"))
                 //.peek((key, value) -> log.info("key: {} - value: {}", key, value))
                 .to(outputTopic);
-        return builder;
+        return builder.build();
     }
 }

@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.processor.TimestampExtractor;
@@ -31,7 +32,7 @@ import static org.apache.kafka.streams.kstream.Suppressed.untilWindowCloses;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-windowed")
-public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner, KafkaStreamBuilder {
+public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     @Autowired
     private final Properties streamProperties;
@@ -47,15 +48,15 @@ public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLi
     @Override
     public void run(String... args) {
 
-        StreamsBuilder builder = createBuilder();
+        Topology topology = createTopology();
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
+        KafkaStreams kafkaStreams = new KafkaStreams(topology, streamProperties);
         kafkaStreams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
         kafkaStreams.start();
     }
 
     @Override
-    public StreamsBuilder createBuilder() {
+    public Topology createTopology() {
 
         Duration windowSize = Duration.ofMinutes(WINDOW_MINUTES_DURATION);
         TimeWindows tumblingWindow = TimeWindows.ofSizeWithNoGrace(windowSize);
@@ -72,7 +73,7 @@ public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLi
                 //.map((wk, v) -> KeyValue.pair(wk.key(), v))
                 .peek((k, v) -> log.info("Output: {} - {}", k, v));
 
-        return builder;
+        return builder.build();
     }
 
     /**
