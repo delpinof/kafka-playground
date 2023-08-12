@@ -29,7 +29,7 @@ public class BinanceExchangeCountByTickerProcessor implements Processor<String, 
     public void init(ProcessorContext<String, Long> context) {
         this.context = context;
         store = context.getStateStore(storeName);
-        this.context.schedule(Duration.ofMinutes(1), PunctuationType.STREAM_TIME, this::forwardAll);
+        this.context.schedule(Duration.ofMinutes(1), PunctuationType.WALL_CLOCK_TIME, this::forwardAll);
     }
 
     @Override

@@ -1,12 +1,15 @@
 package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import com.fherdelpino.kafka.playground.streams.error.BinanceExchangeUncaughtExceptionHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.processor.TimestampExtractor;
@@ -22,24 +25,40 @@ import java.util.Properties;
 import static org.apache.kafka.streams.kstream.Suppressed.BufferConfig.unbounded;
 import static org.apache.kafka.streams.kstream.Suppressed.untilWindowCloses;
 
+/**
+ * Count the amount of exchanges in a timeframe.
+ */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(prefix = "playground", name = "stream-type", havingValue = "exchange-windowed")
-public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner {
+public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLineRunner, TopologyBuilder {
 
     @Autowired
-    private Properties streamProperties;
+    private final Properties streamProperties;
 
     @Value("${kafka.input-topic}")
-    private String inputTopic;
+    private final String inputTopic;
 
     @Autowired
-    private Serde<BinanceExchange> binanceExchangeValueSerde;
+    private final Serde<BinanceExchange> binanceExchangeValueSerde;
+
+    private static final int WINDOW_MINUTES_DURATION = 5;
 
     @Override
     public void run(String... args) {
 
-        Duration windowSize = Duration.ofMinutes(5);
+        Topology topology = createTopology();
+
+        KafkaStreams kafkaStreams = new KafkaStreams(topology, streamProperties);
+        kafkaStreams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
+        kafkaStreams.start();
+    }
+
+    @Override
+    public Topology createTopology() {
+
+        Duration windowSize = Duration.ofMinutes(WINDOW_MINUTES_DURATION);
         TimeWindows tumblingWindow = TimeWindows.ofSizeWithNoGrace(windowSize);
 
         StreamsBuilder builder = new StreamsBuilder();
@@ -54,8 +73,7 @@ public class BinanceExchangeStreamWindowedCommandLineRunner implements CommandLi
                 //.map((wk, v) -> KeyValue.pair(wk.key(), v))
                 .peek((k, v) -> log.info("Output: {} - {}", k, v));
 
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamProperties);
-        kafkaStreams.start();
+        return builder.build();
     }
 
     /**
