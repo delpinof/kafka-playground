@@ -31,7 +31,7 @@ public class BinanceExchangeKafkaConsumerRunner implements CommandLineRunner {
         kafkaSpecificAvroConsumer.subscribe(Collections.singletonList(topic));
         while (true) {
             kafkaSpecificAvroConsumer.poll(Duration.ofMillis(100))
-                    .forEach(record -> log.info("{} - {}", record.key(), convert((BinanceExchange)record.value())));
+                    .forEach(record -> log.info("{} - {}", record.key(), convert((BinanceExchange) record.value())));
         }
     }
 

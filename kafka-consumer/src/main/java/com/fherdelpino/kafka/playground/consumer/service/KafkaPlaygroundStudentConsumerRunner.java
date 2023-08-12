@@ -27,9 +27,9 @@ public class KafkaPlaygroundStudentConsumerRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         kafkaSpecificAvroConsumer.subscribe(Collections.singletonList(topic));
-        while(true) {
+        while (true) {
             kafkaSpecificAvroConsumer.poll(Duration.ofMillis(100))
-                    .forEach(record -> log.info("{} - {}", record.key(), (Student)record.value()));
+                    .forEach(record -> log.info("{} - {}", record.key(), (Student) record.value()));
         }
     }
 }

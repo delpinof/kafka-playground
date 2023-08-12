@@ -9,6 +9,7 @@ import java.util.Map;
 public class BinanceExchangeDeserializationExceptionHandler implements DeserializationExceptionHandler {
 
     int errorCounter = 0;
+
     @Override
     public DeserializationHandlerResponse handle(ProcessorContext context, ConsumerRecord<byte[], byte[]> record, Exception exception) {
         if (errorCounter++ < 25) {
