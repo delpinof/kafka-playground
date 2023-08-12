@@ -1,6 +1,7 @@
 package com.fherdelpino.kafka.playground.streams.service.runner;
 
 import com.fherdelpino.kafka.playground.common.avro.model.BinanceExchange;
+import com.fherdelpino.kafka.playground.streams.error.BinanceExchangeUncaughtExceptionHandler;
 import com.fherdelpino.kafka.playground.streams.service.BinanceExchangeProcessorSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class BinanceExchangeProcessorCommandLineRunner implements CommandLineRun
         final Topology topology = createTopology();
 
         KafkaStreams streams = new KafkaStreams(topology, streamProperties);
+        streams.setUncaughtExceptionHandler(new BinanceExchangeUncaughtExceptionHandler());
         streams.start();
     }
 
